@@ -1,4 +1,5 @@
 require "boris_bikes"
+
 describe DockingStation do
 
   it { should respond_to :release_bike }
@@ -17,19 +18,38 @@ describe DockingStation do
     expect(subject.release_bike).to eq bike
   end
 
-  it "releases working bikes" do
+  it "releases only working bikes" do
     bike = Bike.new
+    bike.working = false
     subject.dock(bike)
-    expect(subject.release_bike).to be_working
+    expect  {subject.release_bike}.to raise_error("bike is broken!")
   end
 
-  it "raises an error when docking station is empty" do
-    expect { subject.release_bike }.to raise_error("station is empty!")
+
+  context "it raises errors" do
+    it "raises an error when docking station is empty" do
+      expect { subject.release_bike }.to raise_error("station is empty!")
+    end
+
+    it "raises an error when docking station is full" do
+      subject.capacity.times {subject.dock(Bike.new)}
+      expect { subject.dock(Bike.new) }.to raise_error("station is full!")
+    end
+
+    it "has a variable capacity" do
+      station = DockingStation.new(51)
+      51.times {station.dock(Bike.new)}
+      expect { station.dock(Bike.new) }.to raise_error("station is full!")
+    end
   end
 
-  it "raises an error when docking station is full" do
-    20.times {subject.dock(Bike.new)}
-    expect { subject.dock(Bike.new) }.to raise_error("station is full!")
+  it "can set new capacity" do
+    station = DockingStation.new(2)
+    expect(station.capacity).to eq(2)
+  end
+
+  it "has default capacity" do
+    expect(subject.capacity).to eq(DockingStation::DEFAULT_CAPACITY)
   end
 
 end
