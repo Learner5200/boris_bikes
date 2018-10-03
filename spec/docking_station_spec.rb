@@ -1,26 +1,24 @@
 require "boris_bikes"
 
 describe DockingStation do
-
+  let(:bike) { double :bike }
   it { should respond_to :release_bike }
 
   it { should respond_to(:dock).with(1).argument }
 
   it "docks a bike" do
-    bike = Bike.new
     subject.dock(bike)
     expect(subject.bikes).to include bike
   end
 
   it "releases bikes" do
-    bike = Bike.new
+    allow(bike).to receive(:working).and_return(true)
     subject.dock(bike)
     expect(subject.release_bike).to eq bike
   end
 
   it "releases only working bikes" do
-    bike = Bike.new
-    bike.working = false
+    allow(bike).to receive(:working).and_return(false)
     subject.dock(bike)
     expect  {subject.release_bike}.to raise_error("bike is broken!")
   end
@@ -32,14 +30,14 @@ describe DockingStation do
     end
 
     it "raises an error when docking station is full" do
-      subject.capacity.times {subject.dock(Bike.new)}
-      expect { subject.dock(Bike.new) }.to raise_error("station is full!")
+      subject.capacity.times {subject.dock(bike)}
+      expect { subject.dock(bike) }.to raise_error("station is full!")
     end
 
     it "has a variable capacity" do
       station = DockingStation.new(51)
-      51.times {station.dock(Bike.new)}
-      expect { station.dock(Bike.new) }.to raise_error("station is full!")
+      51.times {station.dock(bike)}
+      expect { station.dock(bike) }.to raise_error("station is full!")
     end
   end
 

@@ -18,6 +18,7 @@ class DockingStation
     @bikes.pop
   end
 
+
   attr_accessor :bikes, :capacity
 
   private
@@ -37,13 +38,42 @@ class DockingStation
 end
 
 class Bike
-  def initialize
-    @working = true
+  def initialize(working=true)
+    @working = working
   end
-
-  def working?
-    @working
+  def report_broken
+    @working = false
   end
 
   attr_accessor :working
+end
+
+class Van
+  def initialize
+    @van_bikes = []
+  end
+  def collect_broken(station)
+    @van_bikes += station.bikes.reject{|bike| bike.working}
+    station.bikes.select!{|bike| bike.working}
+  end
+  def collect_working(station)
+    @van_bikes += station.bikes.select{|bike| bike.working}
+    station.bikes.reject!{|bike| bike.working}
+  end
+  def deliver_broken(garage)
+    garage.bikes += @van_bikes.reject{|bike| bike.working}
+    @van_bikes.select!{|bike| bike.working}
+  end
+  def deliver_working(station)
+    station.bikes += @van_bikes.select{|bike| bike.working}
+    @van_bikes.reject!{|bike| bike.working}
+  end
+  attr_accessor :van_bikes
+end
+
+class Garage
+  def initialize
+    @bikes = []
+  end
+  attr_accessor :bikes
 end
