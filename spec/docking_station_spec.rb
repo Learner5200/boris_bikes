@@ -1,4 +1,5 @@
 require "boris_bikes"
+require 'pry'
 
 describe DockingStation do
   let(:bike) { double :bike }
@@ -37,6 +38,7 @@ describe DockingStation do
     it "has a variable capacity" do
       station = DockingStation.new(51)
       51.times {station.dock(bike)}
+      binding.pry
       expect { station.dock(bike) }.to raise_error("station is full!")
     end
   end

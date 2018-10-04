@@ -50,25 +50,25 @@ end
 
 class Van
   def initialize
-    @van_bikes = []
+    @bikes = []
   end
   def collect_broken(station)
-    @van_bikes += station.bikes.reject{|bike| bike.working}
+    @bikes += station.bikes.reject{|bike| bike.working}
     station.bikes.select!{|bike| bike.working}
   end
-  def collect_working(station)
-    @van_bikes += station.bikes.select{|bike| bike.working}
-    station.bikes.reject!{|bike| bike.working}
+  def collect_working(garage)
+    @bikes += garage.bikes.select{|bike| bike.working}
+    garage.bikes.reject!{|bike| bike.working}
   end
   def deliver_broken(garage)
-    garage.bikes += @van_bikes.reject{|bike| bike.working}
-    @van_bikes.select!{|bike| bike.working}
+    garage.bikes += @bikes.reject{|bike| bike.working}
+    @bikes.select!{|bike| bike.working}
   end
   def deliver_working(station)
-    station.bikes += @van_bikes.select{|bike| bike.working}
-    @van_bikes.reject!{|bike| bike.working}
+    station.bikes += @bikes.select{|bike| bike.working}
+    @bikes.reject!{|bike| bike.working}
   end
-  attr_accessor :van_bikes
+  attr_accessor :bikes
 end
 
 class Garage
